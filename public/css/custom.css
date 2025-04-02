@@ -1,0 +1,150 @@
+/* General Reset */
+body {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #f8f9fa; /* Light gray background */
+    font-family: 'Arial', sans-serif;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 250px;
+    background-color: #ffffff !important; /* Pure white */
+    color: black !important;
+    height: 100vh;
+    padding-top: 15px;
+    border-right: 1px solid #ddd;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s ease-in-out;
+}
+
+/* Sidebar Links */
+.sidebar a {
+    color: black !important;
+    font-size: 15px;
+    padding: 12px 20px;
+    display: block;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease-in-out;
+}
+
+.sidebar a:hover {
+    background-color: #e9ecef !important; /* Light hover effect */
+    border-radius: 5px;
+}
+
+/* Sidebar Logo */
+.sidebar-logo {
+    width: 120px;
+    height: auto;
+    display: block;
+    margin: 0 auto 15px;
+}
+
+/* Submenu Styling */
+.submenu {
+    display: none;
+    padding-left: 15px;
+}
+
+.submenu ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.submenu-link {
+    color: black;
+    display: block;
+    padding: 8px 15px;
+    text-decoration: none;
+}
+
+.submenu-link:hover {
+    background-color: #e9ecef;
+}
+
+/* Toggle menu visibility */
+.menu-toggle {
+    cursor: pointer;
+}
+
+/* Footer Styling */
+.footer {
+    background-color: #ffffff; /* White background */
+    color: #333; /* Dark text for contrast */
+    text-align: center;
+    padding: 14px;
+    font-size: 14px;
+    border-top: 1px solid #ddd; /* Light border for separation */
+}
+
+.footer a {
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+.footer .divider {
+    margin: 0 8px;
+    color: #999;
+}
+
+/* Forex Scroller */
+.forex-container {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    background: #f8f9fa;
+    padding: 10px 0;
+}
+
+.forex-scroll {
+    display: flex;
+    min-width: 200%;
+    animation: scrollText 25s linear infinite;
+}
+
+.forex-scroll span {
+    display: flex;
+    gap: 20px; /* Adjust spacing between items */
+    font-weight: bold;
+    color: #000;
+}
+
+@keyframes scrollText {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 220px;
+    }
+
+    .sidebar a {
+        font-size: 14px;
+        padding: 10px 15px;
+    }
+
+    .forex-scroll {
+        animation-duration: 18s;
+    }
+}
+
+.d-flex {
+    display: flex;
+    gap: 8px;
+}
