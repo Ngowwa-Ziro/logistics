@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.authlayout')
 
 @section('content')
 <div class="container">
@@ -16,21 +16,24 @@
             <div class="card">
                 <div class="card-header">Set Your Password</div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('setPassword') }}">
+                    <form action="{{ route('set-password.submit', $id) }}" method="POST">
                         @csrf
-                        <input type="hidden" name="email" value="{{ request('email') }}">
+                        {{-- <input type="hidden" name="token" value="{{ request('token') }}"> --}}
 
-                        <div class="mb-3">
-                            <label for="password">New Password</label>
+                        <div class="form-group">
+                            <label>New Password</label>
                             <input type="password" name="password" class="form-control" required>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="password_confirmation">Confirm Password</label>
+                        <div class="form-group">
+                            <label>Confirm Password</label>
                             <input type="password" name="password_confirmation" class="form-control" required>
                         </div>
 
                         <button type="submit" class="btn btn-primary">Set Password</button>
+
+
+
                     </form>
                 </div>
             </div>

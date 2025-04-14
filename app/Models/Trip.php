@@ -16,7 +16,15 @@ class Trip extends Model
         'dropoff_location',
         'product_type',
         'status',
+        'weight',
+        'vehicle_id',
+        'price',
+        'time',
+        'user_id',
+
     ];
+
+
 
     public function customer()
     {
@@ -27,4 +35,15 @@ class Trip extends Model
     {
         return $this->belongsTo(User::class, 'driver_id');
     }
+
+    public function vehicle()
+    {
+        return $this->belongsTo(Vehicle::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
 }

@@ -13,65 +13,83 @@ use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
-    public function index(){
-        $users = User::latest() -> where('status', 'active')->get();
-        //$users = DB::table('users') -> where('status', 'inactive')->get();
-        //dd($users);
+    public function index()
+    {
+        $users = User::latest() -> where('status', 'active')->paginate(10);
+
         return view('users.index',[
             'users' => $users
         ]);
     }
 
-    public function create(){
+    public function create()
+    {
         $roles = Role::pluck('name', 'name')->all();
+
         return view('users.create',[
             'roles' => $roles
         ]);
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
-            'roles' => 'required|array'
+            'roles' => 'required|array',
+            'phone' => 'nullable|numeric|digits_between:9,12'
         ]);
 
         $name = $request->input('name');
         $email = $request->input('email');
+        $phone = $request->input('phone',);
 
-        // 1. Generate random alphanumeric password
+
+        if ($phone) {
+            // Remove non-numeric characters
+            $phone = preg_replace('/\D/', '', $phone);
+
+            // If the phone starts with 0, replace it with 254
+            if (substr($phone, 0, 1) === '0') {
+                $phone = '254' . substr($phone, 1);
+            } elseif (substr($phone, 0, 3) !== '254') {
+                $phone = '254' . $phone;
+            }
+        }
+
         $temporaryPassword = Str::random(12);
 
-        // 2. Create user with this temporary password
         $user = User::create([
             'name' => $name,
             'email' => $email,
             'password' => Hash::make($temporaryPassword),
-            'status' => 'inactive',  // New user starts as inactive
-            'phone' => "0785492188",
+            'status' => 'inactive',
+            'phone' => $phone,
         ]);
+
 
         $user->syncRoles($request->roles);
-
-        // 3. Generate unique token (for password set link)
         $token = Str::random(64);
 
-        DB::table('password_reset_tokens')->where('email', $user->email)->delete();  // Clear old token first
-
+        DB::table('password_reset_tokens')->where('email', $user->email)->delete();
         DB::table('password_reset_tokens')->insert([
             'email' => $user->email,
-            'token' => Hash::make($token),
+            'token' => bcrypt($token),
             'created_at' => now(),
+            'expires_at' => now()->addMinutes(60),
         ]);
 
-        // 4. Send email
+
         Mail::to($user->email)->send(new SetPasswordMail($user, $token));
 
         return redirect()->route('users.index')->with('success', 'User created successfully. They will receive an email to set their password.');
     }
 
 
-    public function edit(User $user){
+
+
+    public function edit(User $user)
+    {
         $roles = Role::pluck('name', 'name')->all();
         $userRoles = $user->roles->pluck('name', 'name')->all();
 
@@ -82,18 +100,23 @@ class UserController extends Controller
         ]);
     }
 
-    public function update(Request $request, User $user){
+    public function update(Request $request, User $user)
+    {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'name' => 'required|string',
+            'email' => 'required|email|',
+            'phone' => 'nullable|numeric|digits_between:9,12',
             'password' => 'nullable|string|min:8|max:255',
             'password_verify' => 'nullable|string|same:password',
             'roles' => 'required|array'
         ]);
 
+        //dd($request);
+
         $data = [
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->name
         ];
 
         // if(!empty($request->password_verify)){
@@ -126,10 +149,25 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'User deactivated successfully.');
     }
 
+    // public function destroy($id)
+    // {
+    //     $user = User::find($id);
+
+    //     if (!$user) {
+    //         return redirect()->route('users.index')->with('error', 'User not found.');
+    //     }
+
+    //     $user->delete();
+
+    //     return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+    // }
+
+
 
     public function inactive()
     {
-        $users = User::where('status', User::STATUS_INACTIVE)->get();
+        $users = User::where('status', User::STATUS_INACTIVE)->paginate(10);
+
         return view('users.inactive', compact('users'));
     }
 
@@ -153,36 +191,43 @@ class UserController extends Controller
 
     public function setPassword(Request $request, $id)
     {
+        // dd($request -> all());
         $request->validate([
-            'password' => 'required|confirmed|min:8',
-            'token' => 'required'
+            'password' => 'required|min:8'
+
         ]);
+        //dd($request);
 
         $user = User::findOrFail($id);
+        //dd($user);
 
         // Validate token from DB
         $record = DB::table('password_reset_tokens')
                     ->where('email', $user->email)
                     ->first();
+                 //   dd($record);
 
-        if (!$record || !Hash::check($request->token, $record->token)) {
+
+        if (!$record ) {
             return back()->withErrors(['token' => 'Invalid or expired token.']);
         }
 
-        // Update the password
+        // Check if the token has expired
+        if (now()->greaterThan($record->expires_at)) {
+            //dd($record);
+            return back()->withErrors(['token' => 'This reset token has expired.']);
+        }
+
+
         $user->update([
             'password' => Hash::make($request->password),
-            'status' => 'active',  // Mark as active after setting password
+            'status' => 'active',
         ]);
+        // dd($user);
 
-        // Clear used token
         DB::table('password_reset_tokens')->where('email', $user->email)->delete();
 
         return redirect()->route('login')->with('success', 'Password set successfully. You can now login.');
     }
-
-
-
-
 
 }

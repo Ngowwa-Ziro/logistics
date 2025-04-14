@@ -18,17 +18,12 @@ class TripController extends Controller
 
     public function store(Request $request)
     {
-        //dd($request);
-        //dd($request->all());
-
         $request->validate([
-
             'pickup_location' => 'required|string|max:255',
             'dropoff_location' => 'required|string|max:255',
             'product_type' => 'required|string|max:255',
+            'weight' => 'required|numeric|min:1', // Validating weight input
         ]);
-
-        //dd($request->all);
 
         try {
             if (auth()->check()) {
@@ -50,12 +45,17 @@ class TripController extends Controller
                 $customerId = $customer->id;
             }
 
+            // Calculate price based on weight and product type
+            $price = $this->calculatePrice($request->weight, $request->product_type);
+
             // Create the trip
             $trip = Trip::create([
                 'customer_id' => $customerId,
                 'pickup_location' => $request->pickup_location,
                 'dropoff_location' => $request->dropoff_location,
                 'product_type' => $request->product_type,
+                'weight' => $request->weight,  // Store weight
+                'price' => $price,  // Store the calculated price
                 'status' => 'pending',
             ]);
 
@@ -63,6 +63,30 @@ class TripController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Something went wrong. Please try again.');
         }
+    }
+
+    private function calculatePrice($weight, $productType)
+    {
+        // Define pricing tiers based on weight and product type
+        $basePrice = 100; // Default price
+
+        switch ($productType) {
+            case 'Standard':
+                $pricePerKg = 10;
+                break;
+            case 'Luxury':
+                $pricePerKg = 20;
+                break;
+            case 'Cargo':
+                $pricePerKg = 30;
+                break;
+            default:
+                $pricePerKg = 10;
+                break;
+        }
+
+        // Calculate price: base price + price based on weight
+        return $basePrice + ($weight * $pricePerKg);
     }
 
 

@@ -10,7 +10,7 @@ use Spatie\Permission\Models\Permission;
 class RoleController extends Controller
 {
     public function index(){
-        $role = Role::get();
+        $role = Role::paginate(10);
 
         return view('roles.index', [
             'roles' => $role
