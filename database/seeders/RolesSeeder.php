@@ -20,7 +20,7 @@ class RolesSeeder extends Seeder
             app()['cache']->forget('spatie.permission.cache');
 
 
-            $roles = ['admin', 'driver', 'customer'];
+            $roles = ['admin', 'driver', 'customer', 'super-admin'];
 
 
             $permissions = [
@@ -33,6 +33,10 @@ class RolesSeeder extends Seeder
                 'approve trip',
                 'cancel trip',
                 'view customers',
+                'manage companies',
+                'create corporate admin',
+                'edit corporate admin',
+                'delete corporate admin',
             ];
 
             // Create roles if they don’t exist
@@ -49,6 +53,7 @@ class RolesSeeder extends Seeder
             $admin = Role::findByName('admin');
             $driver = Role::findByName('driver');
             $customer = Role::findByName('customer');
+            $superAdmin = Role::findByName('super-admin');
 
 
             $admin->syncPermissions($permissions);
@@ -66,6 +71,13 @@ class RolesSeeder extends Seeder
                 'view trips',
                 'approve trip',
                 'cancel trip',
+            ]);
+
+            $superAdmin->syncPermissions([
+                'manage companies',
+                'create corporate admin',
+                'edit corporate admin',
+                'delete corporate admin',
             ]);
 
             $this->command->info('✅ Roles and Permissions seeded successfully!');

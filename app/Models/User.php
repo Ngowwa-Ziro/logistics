@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Trip;
+use App\Models\Payment;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
@@ -25,6 +27,7 @@ class User extends Authenticatable
         'name',
         'email',
         'phone',
+        'role',
         'password',
         'status'
     ];
@@ -63,18 +66,18 @@ class User extends Authenticatable
      * @param string $value
      * @return void
      */
-    public function setPasswordAttribute($value)
+
+
+    public function trips()
     {
-        $this->attributes['password'] = bcrypt($value);
+        return $this->hasMany(Trip::class);
     }
 
-    /**
-     * Check if the user has an admin role.
-     *
-     * @return bool
-     */
-    // public function isAdmin()
-    // {
-    //     return $this->hasRole('admin');
-    // }
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+
+
 }

@@ -1,32 +1,32 @@
 @extends('layouts.app')
-@section("content")
 
-
-<div class="container mt-5">
+@section('content')
+<div class="container">
     <div class="row">
-        <div class="col-md-12">
-
-            @if (session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
-
-            @if(session('error'))
-                <div class="alert alert-danger">{{ session('error') }}</div>
-            @endif
-
-            <div class="card mt-3">
-                <div class="card-header">
-                    <h4>users
-                        <a href="{{ route('users.create') }}" class="btn btn-primary float-end">Add users</a>
-                        <a href="{{ route('users.inactive') }}" class="btn btn-warning float-end me-2"> Inactive Users</a>
-                    </h4>
+        <div class="col-lg-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Users
+                        <a href="{{ route('users.create') }}" class="btn btn-primary">Add User</a>
+                        <a href="{{ route('users.inactive') }}" class="btn btn-primary ">Inactive Users</a>
+                    </h6>
                 </div>
                 <div class="card-body">
-                    <table class="table table-boarded table-striped">
+
+                    @if(session('success'))
+                    <div class="alert alert-success">{{ session('success') }}</div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="alert alert-danger">{{ session('error') }}</div>
+                    @endif
+
+                    <table class="table table-bordered table-striped">
                         <thead>
                             <th>Id</th>
                             <th>Name</th>
                             <th>Email</th>
+                            <th>Phone Number</th>
                             <th>Roles</th>
                             <th>Action</th>
                         </thead>
@@ -36,10 +36,11 @@
                                 <td>{{ $user->id }}</td>
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
+                                <td>{{ $user->phone }}</td>
                                 <td>
                                     @if (!empty($user->getRoleNames()))
                                     @foreach ($user->getRoleNames() as $rolename)
-                                    <span class="badge bg-primary mx-1">{{ $rolename }}</span>
+                                    <span>{{ $rolename }}</span>
                                     @endforeach
                                     @endif
                                 </td>
@@ -55,10 +56,12 @@
                             @endforeach
                         </tbody>
                     </table>
+                    <div class="d-flex justify-content-center">
+                        {{ $users->links('pagination::bootstrap-5') }}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 @endsection
-

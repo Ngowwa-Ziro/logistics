@@ -1,16 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Set Your Password</title>
-</head>
-<body>
-    <p>Hello {{ $user->name }},</p>
-    <p>Your account has been created. Please set your password by clicking the link below:</p>
 
-    <p><strong>Temporary Password:</strong> {{ $password }}</p>
+    <p>Hello {{ $name }},</p>
 
-    <p><a href="{{ route('setPasswordForm', ['email' => $user->email]) }}">Set Your Password</a></p>
+    <p>You have been added to the system. Please set your password using the link below:</p>
 
-    <p>Thank you.</p>
-</body>
-</html>
+    <p><a href="{{ $url }}">Set Your Password</a></p>
+
+    <p>If you did not expect this email, you can safely ignore it.</p>
+
+
+
+
+

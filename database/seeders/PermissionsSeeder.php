@@ -34,6 +34,10 @@ class PermissionsSeeder extends Seeder
             'delete roles',
             'view permissions',
             'assign permissions',
+            'manage companies',
+            'create corporate admin',
+            'edit corporate admin',
+            'delete corporate admin',
 
         ];
 

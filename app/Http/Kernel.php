@@ -67,6 +67,6 @@ class Kernel extends HttpKernel
         'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         'web' => \App\Http\Middleware\SetPasswordMiddleware::class,
         'web' => \App\Http\Middleware\EncryptCookies::class,
-
+        'role' => \App\Http\Middleware\RoleMiddleware::class,
     ];
 }

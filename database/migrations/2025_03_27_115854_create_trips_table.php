@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('pickup_location');
             $table->string('dropoff_location');
             $table->string('product_type');
-            $table->enum('status', ['pending', 'transit', 'cancelled', 'delivered'])->default('pending');
+            $table->enum('status', ['pending', 'approved', 'confirmed', 'transit', 'cancelled', 'delivered'])->default('pending');
             $table->timestamps();
 
         });
